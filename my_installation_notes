@@ -1,0 +1,52 @@
+20171026
+
+##### Fresh installation of matconvnet beta24.
+http://www.vlfeat.org/matconvnet/download/
+
+## Requirements:
+- CUDA 8.0
+- CUDNN 5.1 (most installations include CUDNN 6.0 instead, which is not supported)
+
+On giptarshish:
+- /usr/local/cuda-7.5  doesn't include any CUDNN files
+- /usr/local/cuda-8.0 includes version 6.0 CUDNN files
+
+How to check cudnn version:
+Check the header 'include/cudnn.h' inside the CUDA directory:
+#define CUDNN_MAJOR      6
+#define CUDNN_MINOR      0
+#define CUDNN_PATCHLEVEL 21
+
+## Installation CUDNN 5.1 in my home directory
+
+https://developer.nvidia.com/rdp/cudnn-archive
+Two versions of CUDNN 5.1 are available (for CUDA 7.5 and 8.0 respectivelly)
+
+Nvidia membership required:
+ives.rey.otero@gmail.com
+Highandlow4545
+
+## Compilation
+
+To compile matconvnet with the default CUDA (8.0) but with CUDNN 5.1 (for CUDA 8.0)
+>>> vl_compilenn('EnableGpu', true, 'Verbose', 2, 'EnableCudnn', true, 'CudnnRoot', '/home/reyotero/cuda-8.0')
+
+To compile with CUDA 7.5 and CUDA 5.1 (the one for CUDA 7.5, the compilation command is
+>>> vl_compilenn('EnableGpu', true, 'Verbose', 2, 'EnableCudnn', true, 'CudnnRoot', '~/cuda-7.5/', 'CudaRoot', '/usr/local/cuda-7.5/')
+
+
+# Note (bug in vl_compilenn)
+In these call, CudnnRoot option must be a fullpath without spaces. '~/cuda-8.0' or a path with a spaces would lead compilation crashes like
+>>> ... /matlab/src/bits/impl/nnconv_cudnn.cu(356): error: too few arguments in function call
+or
+>>> nvcc fatal   : Unsupported gpu architecture 'compute_61'
+
+
+# Installation of matconvnet beta25 (FAILS)
+
+vl_compilenn('EnableGpu', true, 'Verbose', 2, 'EnableCudnn', true, 'CudnnRoot', '/home/reyotero/cuda', 'CudaRoot', '/usr/local/cuda-8.0/')
+FAILS
+/usr/local/cuda-7.5/bin/..//include/host_config.h:115:2: error: #error -- unsupported GNU version! gcc versions later than 4.9 are not supported!
+ #error -- unsupported GNU version! gcc versions later than 4.9 are not supported!
+It's using nvcc from cuda 7.5 for some reason...
+

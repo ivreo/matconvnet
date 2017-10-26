@@ -30,6 +30,7 @@ opts.prefetch = false ;
 opts.numEpochs = 300 ;
 opts.learningRate = 0.001 ;
 opts.weightDecay = 0.0005 ;
+opts.tiedFilters = 0;
 
 opts.solver = [] ;  % Empty array means use the default SGD solver
 [opts, varargin] = vl_argparse(opts, varargin) ;
@@ -104,6 +105,9 @@ if isstr(opts.errorFunction)
     case 'binary'
       opts.errorFunction = @error_binary ;
       if isempty(opts.errorLabels), opts.errorLabels = {'binerr'} ; end
+    case 'psnr'
+      opts.errorFunction = @error_psnr ;
+      if isempty(opts.errorLabels), opts.errorLabels = {'PSNR'} ; end
     otherwise
       error('Unknown error function ''%s''.', opts.errorFunction) ;
   end
@@ -246,6 +250,16 @@ function err = error_binary(params, labels, res)
 predictions = gather(res(end-1).x) ;
 error = bsxfun(@times, predictions, labels) < 0 ;
 err = sum(error(:)) ;
+
+% -------------------------------------------------------------------------
+function err = error_psnr(params, labels, res)
+% -------------------------------------------------------------------------
+predictions = gather(res(end-1).x) ;
+sz = size(predictions,1) * size(predictions,2) * size(predictions,3);
+err = sum(sum(sum((predictions - labels).^2,1),2),3);
+v = 10*log10(sz ./ err);
+err = sum(v);
+
 
 % -------------------------------------------------------------------------
 function err = error_none(params, labels, res)
