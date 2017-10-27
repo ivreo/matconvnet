@@ -67,7 +67,8 @@ net.layers{end+1} = struct('type', 'pdist', ...
                            'noRoot', true, ...
                            'aggregate', true) ;
 
-if strcmp(layerType,'IT')
+% in the layer struct, adds a field that stores the index of the layer which are connected to the current one.
+if strcmp(layerType,'IT') 
     net.layers{encodingIdx}.tiedFilters = decodingIdx;
     net.layers{decodingIdx}.tiedFilters = encodingIdx;
 end

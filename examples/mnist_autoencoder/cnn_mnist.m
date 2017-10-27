@@ -25,8 +25,12 @@ if ~isfield(opts.train, 'gpus'), opts.train.gpus = []; end;
 % --------------------------------------------------------------------
 
 if isempty(opts.network)
-  net = cnn_mnist_init('batchNormalization', opts.batchNormalization, ...
-    'networkType', opts.networkType) ;
+  % % Modified - custom network description and initialization
+  %net = cnn_mnist_init('batchNormalization', opts.batchNormalization, ...
+  %  'networkType', opts.networkType) ;
+  global initfn;
+  net = initfn();
+  % % end
 else
   net = opts.network ;
   opts.network = [] ;
@@ -55,7 +59,8 @@ end
   'expDir', opts.expDir, ...
   net.meta.trainOpts, ...
   opts.train, ...
-  'val', find(imdb.images.set == 3)) ;
+  'val', find(imdb.images.set == 3), ...
+  'errorFunction', 'psnr') ;
 
 % --------------------------------------------------------------------
 function fn = getBatch(opts)
@@ -71,14 +76,21 @@ end
 % --------------------------------------------------------------------
 function [images, labels] = getSimpleNNBatch(imdb, batch)
 % --------------------------------------------------------------------
-images = imdb.images.data(:,:,:,batch) ;
-labels = imdb.images.labels(1,batch) ;
+%images = imdb.images.data(:,:,:,batch) ;
+%labels = imdb.images.labels(1,batch) ;
+% Modified
+labels = imdb.images.data(:,:,:,batch) ;
+global noiseSD;
+images = labels + noiseSD*randn(size(labels), 'like', labels) ;
 
 % --------------------------------------------------------------------
 function inputs = getDagNNBatch(opts, imdb, batch)
 % --------------------------------------------------------------------
-images = imdb.images.data(:,:,:,batch) ;
-labels = imdb.images.labels(1,batch) ;
+%images = imdb.images.data(:,:,:,batch) ;
+%labels = imdb.images.labels(1,batch) ;
+labels = imdb.images.data(:,:,:,batch) ;
+global noiseSD;
+images = labels + noiseSD*randn(size(labels), 'like', labels) ;
 if opts.numGpus > 0
   images = gpuArray(images) ;
 end
@@ -127,9 +139,17 @@ y2=double(y2(9:end)')+1 ;
 
 set = [ones(1,numel(y1)) 3*ones(1,numel(y2))];
 data = single(reshape(cat(3, x1, x2),28,28,1,[]));
-dataMean = mean(data(:,:,:,set == 1), 4);
+% % ADDED - eventually reshaping the data for fully connected networks
+global isFC;
+if isFC
+   data = reshape(data, 1,1,28*28,[]) ;
+end
+% %end
+% % MODIFIED - cancel removing the mean
+%dataMean = mean(data(:,:,:,set == 1), 4);
+dataMean = 0;
+% %end 
 data = bsxfun(@minus, data, dataMean) ;
-
 imdb.images.data = data ;
 imdb.images.data_mean = dataMean;
 imdb.images.labels = cat(2, y1, y2) ;

@@ -4,12 +4,12 @@
 http://www.vlfeat.org/matconvnet/download/
 
 ## Requirements:
-- CUDA 8.0
+- CUDA 7.5 (8.0 may be possible, I didn't manage it)
 - CUDNN 5.1 (most installations include CUDNN 6.0 instead, which is not supported)
 
 On giptarshish:
 - /usr/local/cuda-7.5  doesn't include any CUDNN files
-- /usr/local/cuda-8.0 includes version 6.0 CUDNN files
+- /usr/local/cuda-8.0 includes version 6.0 CUDNN files (this seems to prevent option 'CudnnRoot' to work correctly)
 
 How to check cudnn version:
 Check the header 'include/cudnn.h' inside the CUDA directory:
