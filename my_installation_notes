@@ -28,15 +28,16 @@ Highandlow4545
 
 ## Compilation
 
-To compile matconvnet with the default CUDA (8.0) but with CUDNN 5.1 (for CUDA 8.0)
->>> vl_compilenn('EnableGpu', true, 'Verbose', 2, 'EnableCudnn', true, 'CudnnRoot', '/home/reyotero/cuda-8.0')
-
 To compile with CUDA 7.5 and CUDA 5.1 (the one for CUDA 7.5, the compilation command is
 >>> vl_compilenn('EnableGpu', true, 'Verbose', 2, 'EnableCudnn', true, 'CudnnRoot', '~/cuda-7.5/', 'CudaRoot', '/usr/local/cuda-7.5/')
 
+To compile matconvnet with the default CUDA (8.0) but with CUDNN 5.1 (for CUDA 8.0)
+>>> vl_compilenn('EnableGpu', true, 'Verbose', 2, 'EnableCudnn', true, 'CudnnRoot', '/home/reyotero/cuda-8.0')
+(compiles but doesn't work properly)
+
 
 # Note (bug in vl_compilenn)
-In these call, CudnnRoot option must be a fullpath without spaces. '~/cuda-8.0' or a path with a spaces would lead compilation crashes like
+In these calls, CudnnRoot option must be a fullpath without spaces. '~/cuda-8.0' or a path with a spaces would lead compilation crashes like
 >>> ... /matlab/src/bits/impl/nnconv_cudnn.cu(356): error: too few arguments in function call
 or
 >>> nvcc fatal   : Unsupported gpu architecture 'compute_61'

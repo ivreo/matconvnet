@@ -5,7 +5,7 @@ addpath('../../matlab/mex');
 addpath('../../../vlfeat/toolbox/imop');
 
 global isFC;
-isFC = 1;
+isFC = 0;
 global initfn;
 if isFC
     initfn = @cnn_fc_mnist_init;
@@ -15,6 +15,7 @@ end
 
 global solverfn;
 solverfn = [];
+solverfn = @solver.adam;
 
 global learningRate;
 learningRate = 1e-4 * ones(1,1);

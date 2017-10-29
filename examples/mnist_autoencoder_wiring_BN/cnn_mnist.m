@@ -6,7 +6,7 @@ run(fullfile(fileparts(mfilename('fullpath')),...
 
 opts.batchNormalization = false ;
 opts.network = [] ;
-opts.networkType = 'simplenn' ;
+opts.networkType = 'dagnn' ;
 [opts, varargin] = vl_argparse(opts, varargin) ;
 
 sfx = opts.networkType ;
@@ -60,9 +60,8 @@ global solverfn;
   'expDir', opts.expDir, ...
   net.meta.trainOpts, ...
   opts.train, ...
-  'val', find(imdb.images.set == 3), ...
-  'solver', solverfn, ...
-  'errorFunction', 'psnr') ;
+  'val', find(imdb.images.set == 3), 'solver', solverfn);
+%  'val', find(imdb.images.set == 3));
 
 % --------------------------------------------------------------------
 function fn = getBatch(opts)
@@ -150,7 +149,8 @@ if isFC
 end
 % %end
 % % MODIFIED - cancel removing the mean
-dataMean = 0*mean(data(:,:,:,set == 1), 4);
+%dataMean = mean(data(:,:,:,set == 1), 4);
+dataMean = 0;
 % %end 
 data = bsxfun(@minus, data, dataMean) ;
 imdb.images.data = data ;

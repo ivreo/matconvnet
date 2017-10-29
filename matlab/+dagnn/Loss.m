@@ -12,8 +12,32 @@ classdef Loss < dagnn.ElementWise
 
   methods
     function outputs = forward(obj, inputs, params)
-      outputs{1} = vl_nnloss(inputs{1}, inputs{2}, [], 'loss', obj.loss, obj.opts{:}) ;
-      obj.accumulateAverage(inputs, outputs);
+      switch obj.loss
+          case 'psnr'
+              sz = size(inputs{1},1) * size(inputs{1},2) * size(inputs{1},3);
+              err = sum(sum(sum((inputs{1} - inputs{2}).^2,1),2),3);
+              v = 10*log10(sz ./ err);
+              outputs{1} = sum(v);
+
+              if obj.ignoreAverage, return; end;
+              n = obj.numAveraged ;
+              m = n + size(inputs{1}, 4);
+              obj.average = bsxfun(@plus, n * obj.average, gather(outputs{1})) / m ;
+              obj.numAveraged = m ;
+
+          case 'sparsity'
+              outputs{1} = length(find(inputs{1}>0));
+           
+              if obj.ignoreAverage, return; end;
+              n = obj.numAveraged ;
+              m = n + numel(inputs{1});
+              obj.average = bsxfun(@plus, n * obj.average, gather(outputs{1})) / m ;
+              obj.numAveraged = m ;
+
+          otherwise
+              outputs{1} = vl_nnloss(inputs{1}, inputs{2}, [], 'loss', obj.loss, obj.opts{:}) ;
+              obj.accumulateAverage(inputs, outputs);
+      end
     end
 
     function accumulateAverage(obj, inputs, outputs)

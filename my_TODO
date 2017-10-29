@@ -1,0 +1,24 @@
+
+### Avoid global variables in cnn_mnist.m 20171029
+
+In cnn_mnist, the net and the solver are passed as global variables.
+Find the proper passing techniques.
+
+in cnn_mnist.m 
+ - opt.network = []
+
+
+### Clean dagnn.Loss  20171029
+
+For the needs of autoencoders dagnn architecture, the PSNR loss function needed
+to be added so as to be defined in a block layer.  However, the psnr definition
+was added to dagnn.Loss but should have been added
+to vl_nnloss instead.
+
+This would avoid dupplicate code for simplenn and dagnn, and copies of the code
+for averaging over the batches.
+
+- check that we can deactivate the averaging of the psnr
+
+
+
