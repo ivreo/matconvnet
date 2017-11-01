@@ -1,5 +1,10 @@
+### Normal way to pick the solver / DONE 
 
-### Avoid global variables in cnn_mnist.m 20171029
+  - Solvers are implemented as functions and stored in 'examples/+solver/' (a
+    matlab package folder; i.e 'solver.adam' is adam's name in matlab)
+
+
+### Avoid global variables in cnn_mnist.m 20171029  / DONE
 
 In cnn_mnist, the net and the solver are passed as global variables.
 Find the proper passing techniques.

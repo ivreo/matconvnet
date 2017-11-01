@@ -1,7 +1,5 @@
 function net = cnn_fc_mnist_init()
 
-global learningRate;
-global numEpochs;
 global layerType;
 global iters;
 global decodingIdx;
@@ -11,10 +9,7 @@ rng(0) ;
 
 % Meta parameters
 net.meta.inputSize = [1 1 28^2] ;
-net.meta.trainOpts.learningRate = learningRate ;
-net.meta.trainOpts.numEpochs = numEpochs ;
-net.meta.trainOpts.batchSize = 128 ;
-net.meta.trainOpts.tiedFilters = 0;
+net.meta.trainOpts = struct();
 
 % Architecture
 sz = [1,1,28^2,1024];

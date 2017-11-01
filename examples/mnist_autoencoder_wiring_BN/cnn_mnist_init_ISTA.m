@@ -10,6 +10,8 @@ pad = {1};
 stride = {1};
 
 net = dagnn.DagNN();
+net.meta.inputSize = [28 28 1] ;
+net.meta.trainOpts = struct();
 
 k = 1;
 
@@ -75,11 +77,4 @@ net.addLayer('psnr', block, {DGamma,'label'}, 'psnr');
 
 net.initParams();
 
-net.meta.inputSize = [28 28 1] ;
-global learningRate;
-net.meta.trainOpts.learningRate = learningRate ;
-global numEpoch;
-net.meta.trainOpts.numEpochs = numEpoch ;
-net.meta.trainOpts.batchSize = 128 ;
-net.meta.trainOpts.weightDecay = 0.0001 ;
 

@@ -25,12 +25,8 @@ if ~isfield(opts.train, 'gpus'), opts.train.gpus = []; end;
 % --------------------------------------------------------------------
 
 if isempty(opts.network)
-  % % Modified - custom network description and initialization
-  %net = cnn_mnist_init('batchNormalization', opts.batchNormalization, ...
-  %  'networkType', opts.networkType) ;
-  global initfn;
-  net = initfn();
-  % % end
+  net = cnn_mnist_init('batchNormalization', opts.batchNormalization, ...
+    'networkType', opts.networkType) ;
 else
   net = opts.network ;
   opts.network = [] ;
@@ -55,13 +51,11 @@ switch opts.networkType
   case 'dagnn', trainfn = @cnn_train_dag ;
 end
 
-global solverfn;
 [net, info] = trainfn(net, imdb, getBatch(opts), ...
   'expDir', opts.expDir, ...
   net.meta.trainOpts, ...
   opts.train, ...
-  'val', find(imdb.images.set == 3), 'solver', solverfn);
-%  'val', find(imdb.images.set == 3));
+  'val', find(imdb.images.set == 3));
 
 % --------------------------------------------------------------------
 function fn = getBatch(opts)
@@ -150,7 +144,7 @@ end
 % %end
 % % MODIFIED - cancel removing the mean
 %dataMean = mean(data(:,:,:,set == 1), 4);
-dataMean = 0;
+dataMean = 0*mean(data(:,:,:,set == 1), 4);
 % %end 
 data = bsxfun(@minus, data, dataMean) ;
 imdb.images.data = data ;

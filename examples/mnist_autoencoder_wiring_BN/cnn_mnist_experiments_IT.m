@@ -4,32 +4,36 @@ addpath('../../matlab');
 addpath('../../matlab/mex');
 addpath('../../../vlfeat/toolbox/imop');
 
-global initfn;
-initfn = @cnn_mnist_init_ISTA;
-%initfn = @cnn_mnist_init_ISTA_3BN;
-
-global solverfn;
-solverfn = @solver.adam;
-solverfn = [];
-
-global learningRate;
-learningRate = 1e-4;
-
-global numEpoch;
-numEpoch = 200;
 
 global noiseSD;
 noiseSD = 0.2;
 
+% solver options
+train.learningRate = 1e-3;
+train.numEpochs = 10 ;
+train.batchSize = 128 ;
+train.solver = @solver.adam;
+train.weightDecay = 1e-4;
+train.gpus = 2;
+
+% network options 
+global layerType;
+layerType = 'IT';
 global iters;
-iters = 0;
+iters = 4;
+global isFC;
+isFC = 0;
+net = cnn_mnist_init_ISTA();
+%net.meta.trainOpts.tiedFilters = 1;
+networkType = 'dagnn' ;
+expDir = './delete/';
 
-%expDir = ['/home/reyotero/exps/mnist_autoencoder_3_3_1_8_ADAM=1e-4_iters=' num2str(iters)];
-expDir = './delete';
-
+% Training
 [net, info] = cnn_mnist( ...
-    'train', struct('gpus', 4), ...
-    'expDir', expDir);
+    'train', train, ...
+    'expDir', expDir, ...
+    'networkType', networkType,...
+    'network', net);
 
 % figure;
 % D = net.params(net.getParamIndex('e_IT1_Filters')).value;

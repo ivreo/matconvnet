@@ -8,10 +8,11 @@ d_filters = {'d_IT1_Filters'};
 sz = {[3 3 1 8]};
 pad = {1};
 stride = {1};
-
 d_filters = e_filters;
 
 net = dagnn.DagNN();
+net.meta.inputSize = [28 28 1] ;
+net.meta.trainOpts = struct();
 
 name = 'input';
 
@@ -106,20 +107,11 @@ net.addLayer('psnr', block, {name,'label'}, 'psnr');
 
 net.initParams();
 
+% 2 bias out of 3 are set to zero.
 for i = 1 : length(net.params)
     if strcmp(net.params(i).name(end-4:end),'BN1_b') ...
             || strcmp(net.params(i).name(end-4:end),'BN2_b')
         net.params(i).learningRate = 0;
     end
 end
-
-% draw_net(net,num2str(iters));
-
-net.meta.inputSize = [28 28 1] ;
-global learningRate;
-net.meta.trainOpts.learningRate = learningRate ;
-global numEpoch;
-net.meta.trainOpts.numEpochs = numEpoch ;
-net.meta.trainOpts.batchSize = 128 ;
-net.meta.trainOpts.weightDecay = 0.0001 ;
 
