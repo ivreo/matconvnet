@@ -5,7 +5,9 @@ D_der = 0;
 lambda_der = 0;
 mu_der = 0;
 
-mu = repmat(permute(mu,[2,3,1]),size(Gamma,1),size(Gamma,2),size(Gamma,3),size(Gamma,4));
+mu = repmat(permute(mu,[2,3,1]),size(Gamma,1),size(Gamma,2),size(Gamma,3),size(Gamma,4)); % scalar mu 
+%mu = repmat(permute(mu,[2,3,1]),size(Gamma,1),size(Gamma,2),1,size(Gamma,4)); % vector mu
+
 
 for iter = iters : -1 : 1
     MDelta = vl_nnrelu(Gamma(:,:,:,:,iter+1),Delta);
@@ -34,7 +36,8 @@ for iter = iters : -1 : 1
     
     DT_res_MDelta = DT_res .* MDelta;
     
-    mu_der = mu_der + sum(DT_res_MDelta(:));
+    mu_der = mu_der + sum(DT_res_MDelta(:));  % scalar mu
+    %mu_der = mu_der + permute(sum(sum(sum(DT_res_MDelta,1),2),4),[3,1,2]); % vector mu
     
     % Y
     Y_der = Y_der + D_mu_MDelta;
@@ -69,3 +72,4 @@ DT_Y_MDelta = DT_Y .* MDelta;
 
 mu_der = mu_der + sum(DT_Y_MDelta(:));
 
+    

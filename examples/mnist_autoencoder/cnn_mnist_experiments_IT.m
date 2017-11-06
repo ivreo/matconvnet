@@ -5,16 +5,16 @@ addpath('../../matlab/mex');
 addpath('../../matlab/simplenn');
 addpath('../../../vlfeat/toolbox/imop');
 
-
 global noiseSD;
 noiseSD = 0.2;
 
 % solver options
-train.learningRate = 1e-8;
-train.numEpochs = 10 ;
+train.learningRate = 1e-3;
+train.numEpochs = 50 ;
 train.batchSize = 128 ;
 train.solver = @solver.adam;
-train.gpus = 3;
+%train.solver = [];
+train.gpus = 4;
 train.errorFunction = 'psnr';
 
 % network options %
@@ -23,7 +23,7 @@ layerType = 'IT';
 global iters;
 iters = 4;
 global isFC;
-isFC = 1;
+isFC = 0;
 if isFC
     net = cnn_fc_mnist_init();
 else
@@ -39,7 +39,6 @@ expDir = './delete/';
     'expDir', expDir, ...
     'networkType', networkType,...
     'network', net);
-
 
 figure;
 D = net.layers{1}.weights{1};

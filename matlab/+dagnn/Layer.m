@@ -95,12 +95,14 @@ classdef Layer < handle
     %
     %  The advanced interface can be changed in order to extend DagNN
     %  non-trivially, or to optimise certain blocks.
+      
       in = layer.inputIndexes ;
       out = layer.outputIndexes ;
       par = layer.paramIndexes ;
       net = obj.net ;
 
       inputs = {net.vars(in).value} ;
+      outputs = {net.vars(out).value} ;
       derOutputs = {net.vars(out).der} ;
       for i = 1:numel(derOutputs)
         if isempty(derOutputs{i}), return ; end
@@ -117,8 +119,13 @@ classdef Layer < handle
       end
 
       % compute derivatives of inputs and paramerters
-      [derInputs, derParams] = obj.backward ...
-        (inputs, {net.params(par).value}, derOutputs) ;
+      if isa(layer.block,'dagnn.IT') || isa(layer.block,'dagnn.Lasso')
+          [derInputs, derParams] = obj.backward ...
+              (inputs, {net.params(par).value}, derOutputs, outputs) ;
+      else
+          [derInputs, derParams] = obj.backward ...
+              (inputs, {net.params(par).value}, derOutputs) ;
+      end
       if ~iscell(derInputs) || numel(derInputs) ~= numel(in)
         error('Invalid derivatives returned by layer "%s".', layer.name);
       end

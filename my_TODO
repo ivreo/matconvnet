@@ -1,8 +1,45 @@
+### vl_nnIT options for the IT stepsize
+
+3 scenarios:
+ - fixed stepsize (remove the derivatives formula)
+ - trained scalar stepsize
+ - trained vector stepsize (changes the tensor coefficient summation formula and the repmat)
+
+
+### vl_nnIT and vl_nnIT_der prototypes (options handling)
+
+  All options are currently explicited.
+  Use vl_argparse to pass the options a structure.
+
+
+### Fully-connected without reshaping the input. 20171102
+
+CHECK - not working
+Matconvnet optimizes a fully-connected architecture whenever "the support of
+the filter matches exactly the support of the input". Therefore, the reshape
+along with the global variable 'isFC' could be removed.
+
+
+
+
+### Implement missing loss functions 20171102
+
+- psnr_not_averaged
+- sparsity not averaged 
+
+
+### Overloading the class Layer 20171101
+
+To allow the output of the forward pass to be used in the backward pass (i.e.
+IT and Lasso), two types of backward prototypes are described. It is chosen
+depending on the type of layer used.
+
+Find a cleaner way to overload the backward method.
+
 ### Normal way to pick the solver / DONE 
 
   - Solvers are implemented as functions and stored in 'examples/+solver/' (a
     matlab package folder; i.e 'solver.adam' is adam's name in matlab)
-
 
 ### Avoid global variables in cnn_mnist.m 20171029  / DONE
 
@@ -11,7 +48,6 @@ Find the proper passing techniques.
 
 in cnn_mnist.m 
  - opt.network = []
-
 
 ### Clean dagnn.Loss  20171029
 
@@ -24,6 +60,4 @@ This would avoid dupplicate code for simplenn and dagnn, and copies of the code
 for averaging over the batches.
 
 - check that we can deactivate the averaging of the psnr
-
-
 
