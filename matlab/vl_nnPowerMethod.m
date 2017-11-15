@@ -1,7 +1,7 @@
 function [eigvec,eigval] = vl_nnPowerMethod(init_eigvec,D,pad,stride,dilate,inputSize,opts)
 
 if isempty(init_eigvec)
-    iters = 1000;
+    iters = 200; % 1000
 else
     iters = 10;
 end
